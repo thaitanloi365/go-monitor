@@ -1,0 +1,110 @@
+{
+  "name": "antd-admin",
+  "version": "5.3.0",
+  "license": "MIT",
+  "description": "An admin dashboard application demo built upon Ant Design and UmiJS",
+  "dependencies": {
+    "@ant-design/compatible": "^1.0.5",
+    "@ant-design/icons": "^4.2.2",
+    "antd": "^4.0.0",
+    "axios": "^0.19.0",
+    "classnames": "^2.2.6",
+    "dva-model-extend": "^0.1.2",
+    "enquire-js": "^0.2.1",
+    "lodash": "^4.17.11",
+    "nprogress": "^0.2.0",
+    "path-to-regexp": "^6.1.0",
+    "qs": "^6.9.4",
+    "react-helmet": "6.1.0",
+    "react-perfect-scrollbar": "^1.5.8",
+    "store": "^2.0.12"
+  },
+  "devDependencies": {
+    "@lingui/babel-preset-react": "^2.9.1",
+    "@lingui/cli": "^2.9.1",
+    "@lingui/loader": "^2.9.1",
+    "@types/classnames": "^2.2.10",
+    "@types/lingui__react": "^2.8.2",
+    "@types/nprogress": "^0.2.0",
+    "@types/react": "^16.9.44",
+    "@types/store": "^2.0.2",
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
+    "@umijs/preset-react": "^1.4.0",
+    "babel-eslint": "^10.1.0",
+    "babel-plugin-dev-expression": "^0.2.2",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-react": "^1.1.7",
+    "eslint-config-react-app": "^5.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.14.0",
+    "eslint-plugin-react-hooks": "^2.5.0",
+    "husky": "^4.2.0",
+    "less-vars-to-js": "^1.3.0",
+    "lint-staged": "^10.2.11",
+    "mockjs": "^1.1.0",
+    "prettier": "^2.0.5",
+    "prettier-eslint": "^11.0.0",
+    "typescript": "^3.9.7",
+    "umi": "^3.2.14",
+    "umi-types": "^0.5.14"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "eslint --ext .js --fix",
+      "npm run prettier",
+      "git add"
+    ],
+    "**/*.less": [
+      "stylelint --syntax less",
+      "npm run prettier",
+      "git add"
+    ]
+  },
+  "lingui": {
+    "fallbackLocale": "en",
+    "sourceLocale": "en",
+    "localeDir": "src/locales",
+    "srcPathDirs": [
+      "src/pages",
+      "src/layouts",
+      "src/components",
+      "src/layouts"
+    ],
+    "format": "minimal",
+    "extractBabelOptions": {
+      "presets": [
+        "@umijs/babel-preset-umi"
+      ]
+    }
+  },
+  "scripts": {
+    "start": "UMI_ENV=local PORT=9998 node_modules/umi/bin/umi.js dev",
+    "prod": "UMI_ENV=prod node_modules/umi/bin/umi.js dev",
+    "staging": "UMI_ENV=staging node_modules/umi/bin/umi.js dev",
+    "build-dev": "UMI_ENV=dev node_modules/umi/bin/umi.js build",
+    "build-prod": "UMI_ENV=prod node_modules/umi/bin/umi.js build",
+    "build-staging": "NODE_OPTIONS=--max_old_space_size=4096 UMI_ENV=staging node_modules/umi/bin/umi.js build",
+    "analyze": "cross-env ANALYZE=1 umi build",
+    "check:model": "umi dva list model",
+    "lint": "eslint --ext .ts,.tsx src --color",
+    "lint:fix": "eslint --fix './src/**/*.{ts,tsx}'",
+    "format": "prettier --write 'src/**/*.{ts,tsx,scss,css,json}'",
+    "test": "cross-env BABELRC=none umi test",
+    "prettier": "prettier --write 'src/**/*.{ts,tsx,less}'",
+    "precommit": "lint-staged",
+    "add-locale": "lingui add-locale",
+    "extract": "lingui extract",
+    "trans": "lingui extract --clean && node ./scripts/translate.js",
+    "doc": "docsify serve docs"
+  }
+}
