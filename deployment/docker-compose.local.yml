@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      target: builder
+    volumes:
+      - ../:/app
+    command: >
+      CompileDaemon
+      -build="go build -o dist/main ."
+      -command="./dist/main --config ./deployment/config/${BUILD_ENV}.env serve"
+      -log-prefix=false
+      -graceful-kill=true
+      -color=true
+      -directory="./"
+      -pattern=".go|.html|.yaml|.yml"
+      -exclude-dir=".git"
+      -exclude-dir="./dist"
+      -exclude-dir="./logs"
+      -exclude-dir="./web"
+      -exclude=".#*"

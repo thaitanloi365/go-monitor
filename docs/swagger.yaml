@@ -1,0 +1,45 @@
+definitions:
+  models.LoginForm:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /api/v1/docker/container/list:
+    get:
+      consumes:
+      - application/json
+      description: Get list docker container
+      produces:
+      - application/json
+      responses: {}
+      summary: Get list docker container
+      tags:
+      - Docker
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: User Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginForm'
+      produces:
+      - application/json
+      responses: {}
+      summary: Login
+      tags:
+      - Authorization
+swagger: "2.0"
