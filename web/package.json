@@ -88,12 +88,12 @@
     }
   },
   "scripts": {
-    "start": "UMI_ENV=local PORT=9998 node_modules/umi/bin/umi.js dev",
-    "prod": "UMI_ENV=prod node_modules/umi/bin/umi.js dev",
-    "staging": "UMI_ENV=staging node_modules/umi/bin/umi.js dev",
-    "build-dev": "UMI_ENV=dev node_modules/umi/bin/umi.js build",
-    "build-prod": "UMI_ENV=prod node_modules/umi/bin/umi.js build",
-    "build-staging": "NODE_OPTIONS=--max_old_space_size=4096 UMI_ENV=staging node_modules/umi/bin/umi.js build",
+    "start": "cross-env UMI_ENV=local PORT=9998 umi dev",
+    "prod": "cross-env UMI_ENV=prod node_modules/umi/bin/umi.js dev",
+    "staging": "cross-env UMI_ENV=staging node_modules/umi/bin/umi.js dev",
+    "build-dev": "cross-env UMI_ENV=dev node_modules/umi/bin/umi.js build",
+    "build-prod": "cross-env UMI_ENV=prod node_modules/umi/bin/umi.js build",
+    "build-staging": "cross-env UMI_ENV=staging node_modules/umi/bin/umi.js build",
     "analyze": "cross-env ANALYZE=1 umi build",
     "check:model": "umi dva list model",
     "lint": "eslint --ext .ts,.tsx src --color",

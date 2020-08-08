@@ -1,18 +1,19 @@
-import {Method} from 'axios';
+import { Method } from 'axios';
 import config from 'utils/config';
 import request from 'utils/request';
 
 import api from './api';
 
-export type Response = Promise <|{
-  success: boolean;
-  message: string;
-  statusCode: number;
-}
-|{
-  success: boolean;
-}
-> ;
+export type Response = Promise<
+  | {
+      success: boolean;
+      message: string;
+      statusCode: number;
+    }
+  | {
+      success: boolean;
+    }
+>;
 
 const gen = (params: string) => {
   let url = config.apiPrefix + params;
@@ -24,21 +25,11 @@ const gen = (params: string) => {
     url = config.apiPrefix + paramsArray[1];
   }
 
-  return async function(data: any) {
-    try {
-      const resp =
-          await request({url, data, baseURL: config.apiBaseURL, method});
-      console.log('**** resp', resp)
-      return resp
-    } catch (error) {
-      console.log('**** errr', error)
-      return error
-    }
-  };
+  return (data: any) => request({ url, data, baseURL: config.apiBaseURL, method });
 };
 
 type APIMap = {
-  [key in keyof typeof api]: Response
+  [key in keyof typeof api]: Response;
 };
 
 const APIFunction = {};
