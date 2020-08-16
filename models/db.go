@@ -46,6 +46,13 @@ func SetupDB() *DB {
 		panic("failed to connect database")
 	}
 
+	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
+	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
+	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
+	gorm.DefaultCallback.Create().Before("gorm:save_before_associations").Register("app:update_xid_when_create", updateIDForCreateCallback)
+	db.DB().SetMaxIdleConns(10)
+	db.DB().SetMaxOpenConns(100)
+
 	dbInstance = &DB{
 		db.Debug(),
 		cfg,
