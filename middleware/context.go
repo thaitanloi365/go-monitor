@@ -10,10 +10,10 @@ import (
 
 // RegisterCustomContext register custom context
 func RegisterCustomContext() echo.MiddlewareFunc {
-
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			var cc = &models.CustomContext{
+				DB:           models.GetDBInstance(),
 				Context:      c,
 				DockerClient: docker.GetInstance(),
 				Config:       config.GetInstance(),

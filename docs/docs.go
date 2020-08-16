@@ -41,6 +41,56 @@ var doc = `{
                 "responses": {}
             }
         },
+        "/api/v1/docker/container/{id}": {
+            "get": {
+                "description": "Get list docker container",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Docker"
+                ],
+                "summary": "Get list docker container",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of container",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/docker/container/{id}/stream_logs": {
+            "get": {
+                "description": "Stream docker container logs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Docker"
+                ],
+                "summary": "Stream docker container logs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of container",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/api/v1/login": {
             "post": {
                 "description": "Login",
@@ -73,14 +123,14 @@ var doc = `{
         "models.LoginForm": {
             "type": "object",
             "required": [
-                "email",
-                "password"
+                "password",
+                "username"
             ],
             "properties": {
-                "email": {
+                "password": {
                     "type": "string"
                 },
-                "password": {
+                "username": {
                     "type": "string"
                 }
             }

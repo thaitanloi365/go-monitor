@@ -27,9 +27,7 @@ func SetupRoutes() {
 	var docGroup = e.Group("/api/docs")
 	docGroup.Use(middleware.IsBasicAuth())
 
-	SetupAuthRoute(apiGroup.Group(""))
-
-	SetupDockerRoute(apiGroup.Group("/docker"))
+	SetupAdminRoute(apiGroup.Group("/admin"))
 
 	SetupDocRoute(docGroup)
 

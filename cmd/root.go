@@ -8,6 +8,7 @@ import (
 	"github.com/thaitanloi365/go-logging"
 	"github.com/thaitanloi365/go-monitor/config"
 	"github.com/thaitanloi365/go-monitor/docker"
+	"github.com/thaitanloi365/go-monitor/models"
 )
 
 // RootCmd root command
@@ -44,4 +45,5 @@ func setup() {
 	logging.NewGlobal()
 	config.New(cfgFile)
 	docker.New()
+	models.Setup()
 }

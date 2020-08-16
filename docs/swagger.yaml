@@ -1,18 +1,52 @@
 definitions:
   models.LoginForm:
     properties:
-      email:
-        type: string
       password:
         type: string
+      username:
+        type: string
     required:
-    - email
     - password
+    - username
     type: object
 info:
   contact: {}
   license: {}
 paths:
+  /api/v1/docker/container/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get list docker container
+      parameters:
+      - description: ID of container
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get list docker container
+      tags:
+      - Docker
+  /api/v1/docker/container/{id}/stream_logs:
+    get:
+      consumes:
+      - application/json
+      description: Stream docker container logs
+      parameters:
+      - description: ID of container
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Stream docker container logs
+      tags:
+      - Docker
   /api/v1/docker/container/list:
     get:
       consumes:

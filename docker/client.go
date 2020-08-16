@@ -1,10 +1,14 @@
 package docker
 
-import "github.com/docker/docker/client"
+import (
+	"github.com/docker/docker/client"
+	"github.com/thaitanloi365/go-monitor/config"
+)
 
 // Client client
 type Client struct {
 	*client.Client
+	config *config.Configuration
 }
 
 var instance *Client
@@ -18,6 +22,7 @@ func New() *Client {
 
 	instance = &Client{
 		cli,
+		config.GetInstance(),
 	}
 
 	return instance

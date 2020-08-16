@@ -33,6 +33,11 @@ type Configuration struct {
 
 	JWTSecret string        `mapstructure:"JWT_SECRET" json:"jwt_secret"`
 	JWTExpiry time.Duration `mapstructure:"JWT_EXPIRY" json:"jwt_expiry"`
+
+	DockerFilter   string `mapstructure:"DOCKER_FILTER" json:"docker_filter"`
+	DockerTailSize int    `mapstructure:"DOCKER_TAILSIZE" json:"docker_tailsize"`
+
+	DBPath string `mapstructure:"DB_PATH" json:"db_path"`
 }
 
 // New setup config

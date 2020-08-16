@@ -2,7 +2,7 @@ FROM golang:alpine as builder
 
 LABEL maintainer="Thai Tan Loi <thaitanloi365@gmail.com>"
 
-RUN apk update && apk add --no-cache git
+RUN apk update && apk add --no-cache git && apk add --update go git build-base
 
 ARG BUILD_ENV=
 
