@@ -1,18 +1,191 @@
 definitions:
+  errs.Error:
+    properties:
+      code:
+        type: integer
+      header:
+        type: integer
+      message:
+        type: string
+    type: object
+  models.HealthcheckJobCreateForm:
+    properties:
+      endpoint:
+        example: http://localhost:8080
+        type: string
+      interval:
+        example: 30
+        type: integer
+      tag:
+        example: api_healthcheck
+        type: string
+      timeout:
+        example: 20
+        type: integer
+    required:
+    - interval
+    - tag
+    - timeout
+    type: object
   models.LoginForm:
     properties:
+      email:
+        type: string
       password:
         type: string
-      username:
-        type: string
     required:
+    - email
     - password
-    - username
     type: object
+  models.LoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+        type: object
+    type: object
+  models.User:
+    properties:
+      avatar:
+        type: string
+      created_at:
+        type: integer
+      deleted_at:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_login:
+        type: integer
+      last_name:
+        type: string
+      logged_out_at:
+        type: integer
+      name:
+        type: string
+      timezone:
+        type: string
+      updated_at:
+        type: integer
+    type: object
+host: localhost:8080
 info:
-  contact: {}
-  license: {}
+  contact:
+    email: thaitanloi365@gmail.com
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a go-monitor server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Go Monitor api docs
+  version: "1.0"
 paths:
+  /api/v1/admin/docker/container/list:
+    get:
+      consumes:
+      - application/json
+      description: Get list docker container
+      produces:
+      - application/json
+      responses: {}
+      summary: Get list docker container
+      tags:
+      - Admin-Docker
+  /api/v1/admin/job/{tag}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove job by tag
+      parameters:
+      - description: Tag of job
+        in: path
+        name: tag
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Remove job by tag
+      tags:
+      - Admin-Job
+  /api/v1/admin/job/add_healthcheck:
+    post:
+      consumes:
+      - application/json
+      description: Add healthcheck job
+      parameters:
+      - description: Form
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.HealthcheckJobCreateForm'
+      produces:
+      - application/json
+      responses: {}
+      summary: Add healthcheck job
+      tags:
+      - Admin-Job
+  /api/v1/admin/job/list:
+    get:
+      consumes:
+      - application/json
+      description: Get list scheduled jobs
+      produces:
+      - application/json
+      responses: {}
+      summary: Get list scheduled jobs
+      tags:
+      - Admin-Job
+  /api/v1/admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: User Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Bearer:
+              description: OK
+              type: string
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+      summary: Login
+      tags:
+      - Admin-Authorization
+  /api/v1/admin/me/logout:
+    delete:
+      consumes:
+      - application/json
+      description: Logout
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errs.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Logout
+      tags:
+      - Admin-Me
   /api/v1/docker/container/{id}:
     get:
       consumes:
@@ -47,33 +220,12 @@ paths:
       summary: Stream docker container logs
       tags:
       - Docker
-  /api/v1/docker/container/list:
-    get:
-      consumes:
-      - application/json
-      description: Get list docker container
-      produces:
-      - application/json
-      responses: {}
-      summary: Get list docker container
-      tags:
-      - Docker
-  /api/v1/login:
-    post:
-      consumes:
-      - application/json
-      description: Login
-      parameters:
-      - description: User Data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/models.LoginForm'
-      produces:
-      - application/json
-      responses: {}
-      summary: Login
-      tags:
-      - Authorization
+schemes:
+- http
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

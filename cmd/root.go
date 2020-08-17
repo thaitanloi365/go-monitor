@@ -9,6 +9,7 @@ import (
 	"github.com/thaitanloi365/go-monitor/config"
 	"github.com/thaitanloi365/go-monitor/docker"
 	"github.com/thaitanloi365/go-monitor/models"
+	"github.com/thaitanloi365/go-monitor/scheduler"
 )
 
 // RootCmd root command
@@ -46,4 +47,5 @@ func setup() {
 	config.New(cfgFile)
 	docker.New()
 	models.Setup()
+	scheduler.New()
 }

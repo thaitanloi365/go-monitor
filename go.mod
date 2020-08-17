@@ -12,6 +12,7 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
+	github.com/go-co-op/gocron v0.3.0
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.3.0
@@ -31,7 +32,7 @@ require (
 	github.com/thaitanloi365/go-logging v1.0.2
 	go.etcd.io/bbolt v1.3.2
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
-	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
+	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	google.golang.org/appengine v1.6.1
 	gorm.io/driver/sqlite v1.0.9
 	gorm.io/gorm v0.2.31

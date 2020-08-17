@@ -9,10 +9,14 @@ import (
 func SetupAdminRoute(g *echo.Group) {
 	g.POST("/login", controllers.Login)
 
-	g.GET("/container/list", controllers.GetListDockerContainer)
+	g.DELETE("/me/logout", controllers.Logout)
 
+	g.GET("/container/list", controllers.GetListDockerContainer)
 	g.GET("/container/:id/stream_logs", controllers.StreamDockerContainerLogs)
 	g.GET("/container/:id", controllers.GetDockerContainer)
 
-	g.DELETE("/me/logout", controllers.Logout)
+	g.GET("/job/list", controllers.GetListJob)
+	g.DELETE("/job/:tag", controllers.RemoveJobByTag)
+	g.POST("/job/add_healthcheck", controllers.AddHealthcheckJob)
+
 }
