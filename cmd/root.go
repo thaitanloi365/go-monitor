@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/thaitanloi365/go-logging"
@@ -48,4 +49,52 @@ func setup() {
 	docker.New()
 	models.Setup()
 	scheduler.New()
+
+	rescheduleHealthCheckJobs()
+}
+
+func rescheduleHealthCheckJobs() {
+	var jobs []*models.JobHealthCheck
+	var err = models.GetDBInstance().Find(&jobs).Error
+	if err != nil {
+		logging.Global().Error(err)
+		return
+	}
+
+	var scheduledJobs = scheduler.GetInstance().Jobs()
+	for _, job := range jobs {
+		if len(scheduledJobs) == 0 {
+			j, err := scheduler.GetInstance().
+				Every(5).
+				Seconds().
+				SetTag([]string{job.Tag}).
+				Do(models.HeathCheckJobHandler, job.Endpoint, time.Duration(job.Timeout)*time.Second)
+			if err != nil {
+				logging.Global().Error(err)
+				return
+			}
+			logging.Global().Info(j)
+			logging.Global().Infof("Reschedule job tag = %s endpoint = %s interval = %d timeout = %d\n", job.Tag, job.Endpoint, job.Interval, job.Timeout)
+			scheduledJobs = scheduler.GetInstance().Jobs()
+		} else {
+			for _, scheduledJob := range scheduledJobs {
+				if scheduledJob.Tags()[0] == job.Tag {
+					logging.Global().Infof("Skip Reschedule job tag = %s\n", job.Tag)
+					continue
+				}
+
+				_, err := scheduler.GetInstance().
+					Every(job.Interval).
+					Seconds().
+					SetTag([]string{job.Tag}).
+					Do(models.HeathCheckJobHandler, job.Endpoint, time.Duration(job.Timeout)*time.Second)
+				if err != nil {
+					logging.Global().Error(err)
+				}
+				logging.Global().Infof("Reschedule job tag = %s endpoint = %s interval = %d timeout = %d\n", job.Tag, job.Endpoint, job.Interval, job.Timeout)
+			}
+		}
+
+	}
+
 }

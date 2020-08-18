@@ -23,6 +23,7 @@ require (
 	github.com/lib/pq v1.1.1
 	github.com/nyaruka/phonenumbers v1.0.57
 	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/rs/xid v1.2.1
 	github.com/spf13/cobra v1.0.0

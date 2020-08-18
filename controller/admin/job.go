@@ -1,10 +1,7 @@
 package controllers
 
 import (
-	"context"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -12,31 +9,43 @@ import (
 	"github.com/thaitanloi365/go-monitor/scheduler"
 )
 
-// GetListJob Get list scheduled jobs
-// @Tags Admin-Job
-// @Summary Get list scheduled jobs
-// @Description Get list scheduled jobs
+// GetListJobHealthCheck Get list scheduled health check jobs
+// @Tags Admin-Job-HealthCheck
+// @Summary Get list scheduled health check jobs
+// @Description Get list scheduled health check jobs
 // @Accept  json
 // @Produce  json
 // @Header 200 {string} Bearer YOUR_TOKEN
-// @Router /api/v1/admin/job/list [get]
-func GetListJob(c echo.Context) error {
+// @Router /api/v1/admin/job_healthcheck/list [get]
+func GetListJobHealthCheck(c echo.Context) error {
 	var cc = c.(*models.CustomContext)
 
-	var jobs []*models.Job
+	var jobs []*models.JobHealthCheck
+	var err = cc.DB.Preload("Logs").Find(&jobs).Error
+	if err != nil {
+		return err
+	}
+
 	for _, job := range scheduler.GetInstance().Jobs() {
-		var j = models.Job{
-			Tags:    job.Tags(),
+		var j = models.JobHealthCheck{
+			Tag:     job.Tags()[0],
 			StartAt: job.ScheduledAtTime(),
 			NextAt:  job.ScheduledTime(),
 		}
-		jobs = append(jobs, &j)
+
+		for _, storedJob := range jobs {
+			if j.Tag == storedJob.Tag {
+				cc.DB.Model(storedJob).Update(&j)
+			} else {
+				cc.DB.Model(storedJob).Delete(&models.JobHealthCheck{})
+			}
+		}
 	}
 	return cc.Success(jobs)
 
 }
 
-// RemoveJobByTag Remove job by tag
+// RemoveJobHealthCheckByTag Remove job by tag
 // @Tags Admin-Job
 // @Summary Remove job by tag
 // @Description Remove job by tag
@@ -44,24 +53,44 @@ func GetListJob(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Header 200 {string} Bearer YOUR_TOKEN
-// @Router /api/v1/admin/job/{tag} [delete]
-func RemoveJobByTag(c echo.Context) error {
+// @Router /api/v1/admin/job_healthcheck/{tag} [delete]
+func RemoveJobHealthCheckByTag(c echo.Context) error {
 	var cc = c.(*models.CustomContext)
+	var tag = cc.GetPathParamString("tag")
 
-	var jobs []*models.Job
-	for _, job := range scheduler.GetInstance().Jobs() {
-		var j = models.Job{
-			Tags:    job.Tags(),
-			StartAt: job.ScheduledAtTime(),
-			NextAt:  job.ScheduledTime(),
-		}
-		jobs = append(jobs, &j)
-	}
-	return cc.Success(jobs)
+	scheduler.GetInstance().RemoveJobByTag(tag)
+	cc.DB.Delete(&models.JobHealthCheck{}, "tag = ?", tag)
+
+	return cc.Success(fmt.Sprintf("Job tag = %s was deleted", tag))
 
 }
 
-// AddHealthcheckJob Add healthcheck job
+// GetJobHealthCheckByTag Remove job by tag
+// @Tags Admin-Job
+// @Summary Remove job by tag
+// @Description Remove job by tag
+// @Param tag path string true "Tag of job"
+// @Accept  json
+// @Produce  json
+// @Header 200 {string} Bearer YOUR_TOKEN
+// @Router /api/v1/admin/job_healthcheck/{tag} [delete]
+func GetJobHealthCheckByTag(c echo.Context) error {
+	var cc = c.(*models.CustomContext)
+	var tag = cc.GetPathParamString("tag")
+	var job models.JobHealthCheck
+	for _, j := range scheduler.GetInstance().Jobs() {
+		if j.Tags()[0] == tag {
+			cc.DB.First(&job, "tag = ?", tag)
+		} else {
+			cc.DB.Delete(&models.JobHealthCheck{}, "tag = ?", tag)
+		}
+	}
+
+	return cc.Success(fmt.Sprintf("Job tag = %s was deleted", tag))
+
+}
+
+// AddJobHealthCheck Add healthcheck job
 // @Tags Admin-Job
 // @Summary Add healthcheck job
 // @Description Add healthcheck job
@@ -69,45 +98,13 @@ func RemoveJobByTag(c echo.Context) error {
 // @Accept  json
 // @Produce  json
 // @Header 200 {string} Bearer YOUR_TOKEN
-// @Router /api/v1/admin/job/add_healthcheck [post]
-func AddHealthcheckJob(c echo.Context) error {
+// @Router /api/v1/admin/job_healthcheck [post]
+func AddJobHealthCheck(c echo.Context) error {
 	var cc = c.(*models.CustomContext)
 	var form models.HealthcheckJobCreateForm
 	var err = cc.BindAndValidate(&form)
 	if err != nil {
 		return err
-	}
-
-	var handlerFunc = func(endPoint string, timeout time.Duration) error {
-		ctx, cancel := context.WithTimeout(context.Background(), timeout)
-		defer cancel()
-
-		go func() {
-			select {
-			case <-time.After(timeout * 2):
-				fmt.Println("overslept after", timeout*2)
-			case <-ctx.Done():
-				fmt.Println(ctx.Err())
-			}
-		}()
-
-		req, err := http.NewRequestWithContext(ctx, "GET", endPoint, nil)
-		if err != nil {
-			return err
-		}
-
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return err
-		}
-
-		data, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(string(data))
-		return nil
 	}
 
 	err = scheduler.GetInstance().RemoveJobByTag(form.Tag)
@@ -119,16 +116,25 @@ func AddHealthcheckJob(c echo.Context) error {
 		Every(form.Interval).
 		Seconds().
 		SetTag([]string{form.Tag}).
-		Do(handlerFunc, form.Endpoint, time.Duration(form.Timeout)*time.Second)
+		Do(models.HeathCheckJobHandler, form.Endpoint, time.Duration(form.Timeout)*time.Second)
 	if err != nil {
 		return err
 	}
 
-	var j = models.Job{
-		Tags:    job.Tags(),
-		StartAt: job.ScheduledAtTime(),
-		NextAt:  job.ScheduledTime(),
+	var j = models.JobHealthCheck{
+		Tag:      job.Tags()[0],
+		StartAt:  job.ScheduledAtTime(),
+		NextAt:   job.ScheduledTime(),
+		Endpoint: form.Endpoint,
+		Interval: form.Interval,
+		Timeout:  form.Timeout,
 	}
+
+	err = j.CreateOrUpdate()
+	if err != nil {
+		return err
+	}
+
 	return cc.Success(j)
 
 }

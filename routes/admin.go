@@ -15,8 +15,9 @@ func SetupAdminRoute(g *echo.Group) {
 	g.GET("/container/:id/stream_logs", controllers.StreamDockerContainerLogs)
 	g.GET("/container/:id", controllers.GetDockerContainer)
 
-	g.GET("/job/list", controllers.GetListJob)
-	g.DELETE("/job/:tag", controllers.RemoveJobByTag)
-	g.POST("/job/add_healthcheck", controllers.AddHealthcheckJob)
+	g.GET("/job_healthcheck/list", controllers.GetListJobHealthCheck)
+	g.DELETE("/job_healthcheck/:tag", controllers.RemoveJobHealthCheckByTag)
+	g.GET("/job_healthcheck/:tag", controllers.GetJobHealthCheckByTag)
+	g.POST("/job_healthcheck", controllers.AddJobHealthCheck)
 
 }

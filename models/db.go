@@ -5,19 +5,23 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/thaitanloi365/go-logging"
 	"github.com/thaitanloi365/go-monitor/config"
 )
 
 // DB db
 type DB struct {
 	*gorm.DB
-	config *config.Configuration
+	config  *config.Configuration
+	logging *logging.Logging
 }
 
 var dbInstance *DB
 
 var models = []interface{}{
 	&User{},
+	&JobHealthCheck{},
+	&JobHealthCheckLog{},
 }
 
 // Setup bootstrap app
@@ -56,6 +60,7 @@ func SetupDB() *DB {
 	dbInstance = &DB{
 		db.Debug(),
 		cfg,
+		logging.New(),
 	}
 
 	return dbInstance

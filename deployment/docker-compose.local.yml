@@ -20,3 +20,4 @@ services:
       -exclude-dir="./logs"
       -exclude-dir="./web"
       -exclude=".#*"
+      -exclude="./go-monitor.db"
