@@ -9,6 +9,15 @@ import (
 	"github.com/thaitanloi365/go-logging"
 )
 
+// JobHealthCheckStatus status
+type JobHealthCheckStatus string
+
+// All status
+var (
+	JobHealthCheckStatusUp   JobHealthCheckStatus = "up"
+	JobHealthCheckStatusDown JobHealthCheckStatus = "down"
+)
+
 // JobHealthCheck job
 type JobHealthCheck struct {
 	Tag      string               `gorm:"primary_key" json:"tag"`
@@ -17,6 +26,7 @@ type JobHealthCheck struct {
 	Endpoint string               `json:"endpoint"`
 	Timeout  uint64               `json:"timeout"`
 	Interval uint64               `json:"interval"`
+	Status   JobHealthCheckStatus `gorm:"default:'up'" json:"status"`
 	Logs     []*JobHealthCheckLog `gorm:"foreignkey:tag;association_foreignkey:tag" json:"logs"`
 }
 
@@ -52,12 +62,12 @@ func HeathCheckJobHandler(tag string, endPoint string, timeout time.Duration) er
 	logging.Global().Infof("Handle job tag = %s endpoint = %s timeout = %d\n", tag, endPoint, timeout)
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
-			Timeout: 5 * time.Second,
+			Timeout: timeout,
 		}).Dial,
-		TLSHandshakeTimeout: 5 * time.Second,
+		TLSHandshakeTimeout: timeout,
 	}
 	var netClient = &http.Client{
-		Timeout:   time.Second * 10,
+		Timeout:   timeout,
 		Transport: netTransport,
 	}
 
@@ -65,12 +75,17 @@ func HeathCheckJobHandler(tag string, endPoint string, timeout time.Duration) er
 	var log = JobHealthCheckLog{
 		Tag:           tag,
 		Endpoint:      endPoint,
-		UpdatedAt:     time.Now().Unix(),
 		StatusCode:    resp.StatusCode,
 		StatusMessage: resp.Status,
 	}
-	logging.Global().Info(log)
 
-	dbInstance.Create(&log)
+	log.CreateOrUpdate()
+
+	if log.StatusCode >= 400 {
+		var job = JobHealthCheck{
+			Tag: tag,
+		}
+		dbInstance.Model(&job).Update(&JobHealthCheck{Status: JobHealthCheckStatusDown})
+	}
 	return err
 }

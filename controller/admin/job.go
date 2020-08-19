@@ -109,14 +109,14 @@ func AddJobHealthCheck(c echo.Context) error {
 
 	err = scheduler.GetInstance().RemoveJobByTag(form.Tag)
 	if err != nil {
-		fmt.Println(err)
+		cc.Logging.Error(err)
 	}
 
 	job, err := scheduler.GetInstance().
 		Every(form.Interval).
 		Seconds().
 		SetTag([]string{form.Tag}).
-		Do(models.HeathCheckJobHandler, form.Endpoint, time.Duration(form.Timeout)*time.Second)
+		Do(models.HeathCheckJobHandler, form.Tag, form.Endpoint, time.Duration(form.Timeout)*time.Second)
 	if err != nil {
 		return err
 	}

@@ -13,11 +13,12 @@ services:
       -log-prefix=false
       -graceful-kill=true
       -color=true
+      -verbose=true
       -directory="./"
       -pattern=".go|.html|.yaml|.yml"
       -exclude-dir=".git"
       -exclude-dir="./dist"
       -exclude-dir="./logs"
       -exclude-dir="./web"
+      -exclude-dir="./data"
       -exclude=".#*"
-      -exclude="./go-monitor.db"

@@ -56,13 +56,11 @@ func (user *User) HashPassword() error {
 		return err
 	}
 	user.Password = string(hash)
-	fmt.Println("**** user.Password", user.Password)
 	return nil
 }
 
 // ComparePassword compares User.Password hash with raw password
 func (user *User) ComparePassword(password string) error {
-	fmt.Println("**** user.Password", user.Password, password)
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
 

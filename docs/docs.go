@@ -49,7 +49,7 @@ var doc = `{
                 "responses": {}
             }
         },
-        "/api/v1/admin/job/add_healthcheck": {
+        "/api/v1/admin/job_healthcheck": {
             "post": {
                 "description": "Add healthcheck job",
                 "consumes": [
@@ -76,9 +76,9 @@ var doc = `{
                 "responses": {}
             }
         },
-        "/api/v1/admin/job/list": {
+        "/api/v1/admin/job_healthcheck/list": {
             "get": {
-                "description": "Get list scheduled jobs",
+                "description": "Get list scheduled health check jobs",
                 "consumes": [
                     "application/json"
                 ],
@@ -86,13 +86,13 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin-Job"
+                    "Admin-Job-HealthCheck"
                 ],
-                "summary": "Get list scheduled jobs",
+                "summary": "Get list scheduled health check jobs",
                 "responses": {}
             }
         },
-        "/api/v1/admin/job/{tag}": {
+        "/api/v1/admin/job_healthcheck/{tag}": {
             "delete": {
                 "description": "Remove job by tag",
                 "consumes": [
@@ -183,6 +183,70 @@ var doc = `{
                         }
                     }
                 }
+            }
+        },
+        "/api/v1/admin/notifier/list": {
+            "get": {
+                "description": "Get list notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin-Notifier"
+                ],
+                "summary": "Get list notifier",
+                "responses": {}
+            }
+        },
+        "/api/v1/admin/notifier/{provider}": {
+            "get": {
+                "description": "Get notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin-Notifier"
+                ],
+                "summary": "Get notifier",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tag of job",
+                        "name": "tag",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "put": {
+                "description": "Update notifier",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin-Notifier"
+                ],
+                "summary": "Update notifier",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tag of job",
+                        "name": "tag",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
             }
         },
         "/api/v1/docker/container/{id}": {

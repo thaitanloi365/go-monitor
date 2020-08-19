@@ -97,24 +97,7 @@ paths:
       summary: Get list docker container
       tags:
       - Admin-Docker
-  /api/v1/admin/job/{tag}:
-    delete:
-      consumes:
-      - application/json
-      description: Remove job by tag
-      parameters:
-      - description: Tag of job
-        in: path
-        name: tag
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses: {}
-      summary: Remove job by tag
-      tags:
-      - Admin-Job
-  /api/v1/admin/job/add_healthcheck:
+  /api/v1/admin/job_healthcheck:
     post:
       consumes:
       - application/json
@@ -132,17 +115,34 @@ paths:
       summary: Add healthcheck job
       tags:
       - Admin-Job
-  /api/v1/admin/job/list:
-    get:
+  /api/v1/admin/job_healthcheck/{tag}:
+    delete:
       consumes:
       - application/json
-      description: Get list scheduled jobs
+      description: Remove job by tag
+      parameters:
+      - description: Tag of job
+        in: path
+        name: tag
+        required: true
+        type: string
       produces:
       - application/json
       responses: {}
-      summary: Get list scheduled jobs
+      summary: Remove job by tag
       tags:
       - Admin-Job
+  /api/v1/admin/job_healthcheck/list:
+    get:
+      consumes:
+      - application/json
+      description: Get list scheduled health check jobs
+      produces:
+      - application/json
+      responses: {}
+      summary: Get list scheduled health check jobs
+      tags:
+      - Admin-Job-HealthCheck
   /api/v1/admin/login:
     post:
       consumes:
@@ -186,6 +186,50 @@ paths:
       summary: Logout
       tags:
       - Admin-Me
+  /api/v1/admin/notifier/{provider}:
+    get:
+      consumes:
+      - application/json
+      description: Get notifier
+      parameters:
+      - description: Tag of job
+        in: path
+        name: tag
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get notifier
+      tags:
+      - Admin-Notifier
+    put:
+      consumes:
+      - application/json
+      description: Update notifier
+      parameters:
+      - description: Tag of job
+        in: path
+        name: tag
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Update notifier
+      tags:
+      - Admin-Notifier
+  /api/v1/admin/notifier/list:
+    get:
+      consumes:
+      - application/json
+      description: Get list notifier
+      produces:
+      - application/json
+      responses: {}
+      summary: Get list notifier
+      tags:
+      - Admin-Notifier
   /api/v1/docker/container/{id}:
     get:
       consumes:

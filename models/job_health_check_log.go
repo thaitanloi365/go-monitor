@@ -1,5 +1,7 @@
 package models
 
+import "github.com/jinzhu/gorm"
+
 // JobHealthCheckLog log
 type JobHealthCheckLog struct {
 	ID            string `gorm:"primary_key" json:"id"`
@@ -9,5 +11,23 @@ type JobHealthCheckLog struct {
 	Endpoint      string `json:"endpoint"`
 	StatusCode    int    `json:"status_code"`
 	StatusMessage string `json:"status_message"`
-	CheckedAt     int64  `json:"checked_at"`
+}
+
+// CreateOrUpdate create or update
+func (j JobHealthCheckLog) CreateOrUpdate() error {
+	var jobLog JobHealthCheckLog
+	var err = dbInstance.First(&jobLog, JobHealthCheckLog{Tag: j.Tag, StatusCode: j.StatusCode, Endpoint: j.Endpoint}).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			err = dbInstance.Create(&j).Error
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+		return err
+	}
+
+	err = dbInstance.Model(&jobLog).Update(&j).Error
+	return err
 }
